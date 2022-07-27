@@ -40,19 +40,18 @@ void setupINA226()
 float checkVoltage()
 {
     float voltage = 0;
-
-    //   Serial.print("Bus voltage:   ");
-    //   Serial.print(ina.readBusVoltage(), 5);
-    //   Serial.println(" V");
+    voltage = ina.readBusVoltage();
+    Serial.print("Bus voltage:  ");
+    Serial.print(voltage, 1);
+    Serial.println(" V");
 
     //   Serial.print("Bus power:     ");
     //   Serial.print(ina.readBusPower(), 5);
     //   Serial.println(" W");
 
-    voltage = ina.readShuntVoltage();
-    Serial.print("Shunt voltage: ");
-    Serial.print(voltage, 1);
-    Serial.println(" V");
+    // Serial.print("Shunt voltage: ");
+    // Serial.print(voltage, 1);
+    // Serial.println(" V");
 
     //   Serial.print("Shunt current: ");
     //   Serial.print(ina.readShuntCurrent(), 5);
