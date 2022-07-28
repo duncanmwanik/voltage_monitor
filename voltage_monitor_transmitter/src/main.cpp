@@ -3,6 +3,9 @@
 #include "monitor.h"
 #include "oled_display.h"
 
+long lastSendTime = 0; // last send time
+int interval = 1000;
+
 void setup()
 {
   // initialize Serial Monitor
@@ -16,19 +19,21 @@ void setup()
 
   // setup Lora
   setupLora();
-
 }
 
 void loop()
 {
-  // get voltage value
-  float voltage = checkVoltage();
+  if (millis() - lastSendTime > interval)
+  {
+    // get voltage value
+    float voltage = checkVoltage();
 
-  // send voltage value
-  sendData(voltage);
-  
-  // show voltage value
-  displayData(voltage);
+    // send voltage value
+    sendData(voltage);
 
-  // delay(100);
+    // show voltage value
+    displayData(voltage);
+    lastSendTime = millis();
+    interval = random(2000) + 1000; // 2-3 seconds
+  }
 }
