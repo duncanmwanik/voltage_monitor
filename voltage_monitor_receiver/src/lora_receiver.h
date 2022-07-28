@@ -3,7 +3,8 @@
 
 #include <Arduino.h>
 
-void setupLoRa();
-String getData();
+// void setupLoRa();
+// // String getData();
+// void onReceive(int packetSize);
 
 #endif

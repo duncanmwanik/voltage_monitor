@@ -2,6 +2,6 @@
 #define DISPLAY_H
 
 void setupRGBOLED();
-void displayData(String voltage);
+void displayData(String sender, String voltage);
 
 #endif
