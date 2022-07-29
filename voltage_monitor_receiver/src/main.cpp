@@ -132,7 +132,8 @@ void loop()
 
   // display data
   for (int i = 0; i<= number_of_transmitters; i++){
-    
+    display_data ();
+    delay(5000); //delay for 5secs
   }
 }
 
