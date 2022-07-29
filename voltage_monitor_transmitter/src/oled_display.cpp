@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#include "lora_transmit.h"
 #include "SSD1306.h"
 #define SDA_PIN 21 // GPIO21 -> SDA
 #define SCL_PIN 22 // GPIO22 -> SCL
@@ -17,16 +19,18 @@ void setupOLED()
 }
 
 void displayData(float voltage)
-{
+{    
+    String ID = get_device_id();
     display.clear(); // clear the display
-
-    display.drawString(0, 0, "BAT | ");
+    // DISPLAY THE VOLTAVE OF BAATTERY
+    display.drawString(0, 0, "  BAT | ");
     display.drawString(40, 0, String(voltage));
     display.drawString(70, 0, "V");
-    // display.drawString(0, 32, "%  ");
-    // display.drawString(40, 32, String(1));
-    // display.drawString(70, 32, "%");
 
+    //DISPLAY THE ID OF THE BOARD
+    display.drawString(0, 20, "My ID | ");
+    display.drawString(40, 20,ID);
+    
     display.display(); // write the buffer to the display
     delay(10);
 }

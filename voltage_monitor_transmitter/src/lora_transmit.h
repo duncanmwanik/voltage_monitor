@@ -3,5 +3,6 @@
 
 void setupLora();
 void sendData(int voltage);
+String get_device_id();
 
 #endif

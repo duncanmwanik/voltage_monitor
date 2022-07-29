@@ -4,7 +4,7 @@
 #include "oled_display.h"
 
 long lastSendTime = 0; // last send time
-int interval = 1000;
+int interval = 60000;
 
 void setup()
 {
@@ -34,6 +34,6 @@ void loop()
     // show voltage value
     displayData(voltage);
     lastSendTime = millis();
-    interval = random(2000) + 1000; // 2-3 seconds
+    interval = random(2000) + 60000; // 1min with 2-3 seconds difference in range.
   }
 }

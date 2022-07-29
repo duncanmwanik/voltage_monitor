@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <LoRa.h>
@@ -5,12 +6,15 @@
 // LoRa
 #define ss 15
 #define rst 18
-#define dio0 9
-#define dio1 10
+#define dio0 4
+#define dio1 5
 
 byte msgCount = 0;            // count of outgoing messages
-byte localAddress = 0x01;     // address of this device
-byte mainBoardAddress = 0x02; // destination to send to
+//ENSURE TO CUSTOMIZE THIS VARIABLE FOR EACH TRANSMITTER BOARD
+byte localAddress = 0x01;     // address of this device //ALL TRSMITTING DEICES WILL HOLD ADDRESSES 0X01 - 0XF9
+///////////////////////
+
+byte mainBoardAddress = 0xFE; // destination to send to // ADDRESS OF THE RECIVER(MAIN BOARD) IS 0XFE (254 IN DECIMAL)
 
 void setupLora()
 {
@@ -49,4 +53,9 @@ void sendData(int voltage)
   LoRa.print(voltage);                  // add payload
   LoRa.endPacket();                     // finish packet and send it
   msgCount++;
+
+}
+
+String get_device_id(){
+  return String(localAddress);
 }

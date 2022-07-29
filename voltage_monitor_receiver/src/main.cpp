@@ -4,20 +4,40 @@
 #include "lora_receiver.h"
 #include "display.h"
 
+
+//screen
+#include <Arduino.h>
+#include "OLED_Driver.h"
+#include "GUI_Paint.h"
+#include "DEV_Config.h"
+#include "Debug.h"
+
 // LoRa
 #define ss 15
 #define rst 18
-#define dio0 9
-#define dio1 10
+#define dio0 4
+#define dio1 5
 
 byte sender;
 String incoming;
+
+const int number_of_transmitters = 10;
+
+typedef struct 
+{
+  int id ;
+  int voltage_data;
+  long time_saved_data;
+}mydata;
+
+mydata received_data [number_of_transmitters];
+
 
 // Lora packet wait period
 unsigned long timeNow = 0;
 bool loraReceived = false;
 
-byte localAddress = 0x02; // address of this device
+byte localAddress = 0xFE; // address of this device //254 IN DECIMAL
 
 void setup()
 {
@@ -87,14 +107,62 @@ void onReceive(int packetSize)
   Serial.println("Snr: " + String(LoRa.packetSnr()));
   Serial.println();
   loraReceived = true;
+
+  /********************************/
+  //FORMAT OF STORING THE DATA FROM DIFFERENT RECEIVERS SO AS TO ENABLE SQUENTIAL STORAGE(SAVING) AND RETRIVAL FOR DISPLAY
+  //THE SENDERS ID WILL DETERMINE WHERE THE DATA IS STORED IN AN ARRAY
+  //strongly recommend we use ID of the transmitter from 0x01 (1 in decimal) to 0xF0 
+  //ensure to update the number of transmitter variable above
+//retrieving data from lora
+  int id_data = sender; //sender ID in integer form
+  int voltage_received = incoming.toInt();
+  long current_time = millis();
+
+//saaving data to array
+
+   received_data[id_data - 1] = (mydata) {id_data, voltage_received , current_time}; //data saved in the array now..position in the array == ID of the transmitter
+
 }
 
 void loop()
 {
   onReceive(LoRa.parsePacket());
-
+  
   String sender_ = "0x" + String(sender, HEX);
 
   // display data
-  displayData(sender_, incoming);
+  for (int i = 0; i<= number_of_transmitters; i++){
+    
+  }
+}
+
+void display_data ()
+{
+  // TODO : CHECK IF THERE IS A VOLTAG MEASUREMENT ABOVE ZERO...DISPLAY CHECK CONNECTION ON THE NEXT LINE
+    // TODO : CHECK THAT THE DATA PRESENTED IS NOT OVER 10MIN OLD OTHER WISE DISPLAY STALE ON THE NEXT LINE
+    // TODO : IF ALL IS OKAY DISPLAY DATA
+       if(received_data->voltage_data != 0){
+         OLED_1in5_rgb_Clear();
+         Paint_DrawString_EN(5,50, " ID  |", &Font16, BLACK, BLUE);
+         Paint_DrawString_EN(5, 20, String(received_data->id).c_str() , &Font16, BLACK, BLUE);
+         
+         Paint_DrawString_EN(25, 5, "BAT  |", &Font16, BLACK, BLUE);
+         Paint_DrawNum(25, 40, String(received_data->voltage_data).c_str(), &Font16, 2, RED, BLACK);
+         Paint_DrawNum(25, 70, "V", &Font16, 2, RED, BLACK);
+         // Driver_Delay_ms(100);
+         if ((millis() - received_data->time_saved_data) > 600000)
+         {
+          Paint_DrawString_EN(40, 5, "STALE", &Font16, BLACK, BLUE);
+         }
+         
+       }
+       else {
+         OLED_1in5_rgb_Clear();
+         Paint_DrawString_EN(5,50, " ID  |", &Font16, BLACK, BLUE);
+         Paint_DrawString_EN(5, 20, String(received_data->id).c_str() , &Font16, BLACK, BLUE);
+
+         Paint_DrawString_EN(25, 5, " CHECK CONNECTION ", &Font16, BLACK, BLUE);
+          // Driver_Delay_ms(100);       
+       }
+      
 }
